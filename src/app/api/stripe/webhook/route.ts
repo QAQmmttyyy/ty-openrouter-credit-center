@@ -23,6 +23,10 @@ export async function POST(req: Request) {
     const uid = sess.metadata.uid
     const amt = parseFloat(sess.metadata.amt)
 
+    // Check idempotency
+    const [existing] = await db.select().from(transactions).where(eq(transactions.stripeSessionId, sess.id))
+    if (existing) return NextResponse.json({ ok: true, msg: 'Duplicate' })
+
     // Update DB
     const [w] = await db.select().from(wallets).where(eq(wallets.userId, uid))
     const nt = (w?.totalPurchased || 0) + amt

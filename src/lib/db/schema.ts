@@ -55,6 +55,6 @@ export const transactions = sqliteTable('transaction', {
   amount: real('amount').notNull(),
   type: text('type').notNull(), // 'topup', 'usage_sync'
   status: text('status').notNull(), // 'pending', 'completed', 'failed'
-  stripeSessionId: text('stripe_session_id'),
+  stripeSessionId: text('stripe_session_id').unique(),
   createdAt: integer('created_at', { mode: 'timestamp_ms' }).notNull(),
 })
