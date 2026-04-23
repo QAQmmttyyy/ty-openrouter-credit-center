@@ -25,7 +25,13 @@ export async function GET() {
       usage = ork.usage || 0
       balance = w.totalPurchased - usage
     } catch (err) {
-      balance = w.totalPurchased
+      return NextResponse.json({
+        balance: null,
+        usage: null,
+        wallet: w,
+        transactions: txs,
+        error: 'OR_SYNC_FAILED'
+      })
     }
   } else if (w) {
     balance = w.totalPurchased

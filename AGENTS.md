@@ -13,7 +13,7 @@
 ### General Principles
 
 - Keep things in one function unless composable or reusable
-- Avoid using the `any` type
+- **Avoid using the `any` type**
 - Prefer single word variable names where possible
 - Rely on type inference when possible; avoid explicit type annotations or interfaces unless necessary for exports or clarity
 - Prefer functional array methods (flatMap, filter, map) over for loops; use type guards on filter to maintain type inference downstream
