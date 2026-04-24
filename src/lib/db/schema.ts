@@ -42,7 +42,6 @@ export const verificationTokens = sqliteTable('verificationToken', {
 export const wallets = sqliteTable('wallet', {
   id: text('id').notNull().primaryKey(),
   userId: text('user_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
-  totalPurchased: real('total_purchased').notNull().default(0),
   keyHash: text('key_hash'),
   keyLabel: text('key_label'),
   keyValue: text('key_value'), // Only shown once during creation

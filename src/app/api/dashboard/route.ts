@@ -9,7 +9,7 @@ import { NextResponse } from 'next/server'
 export async function GET() {
   const sess = await getServerSession(authOptions)
   if (!sess?.user) return new Response('Unauthorized', { status: 401 })
-  const uid = (sess.user as any).id
+  const uid = sess.user.id
 
   const [w] = await db.select().from(wallets).where(eq(wallets.userId, uid))
   const txs = await db.select().from(transactions)
@@ -22,9 +22,13 @@ export async function GET() {
   if (w?.keyHash) {
     try {
       const ork = await get_key(w.keyHash)
-      usage = ork.usage || 0
-      balance = w.totalPurchased - usage
+      if (ork) {
+        // Source of truth: OpenRouter's limit_remaining
+        balance = ork.limit_remaining || 0
+        usage = ork.usage || 0
+      }
     } catch (err) {
+      console.error('Dash sync failed:', err)
       return NextResponse.json({
         balance: null,
         usage: null,
@@ -33,14 +37,15 @@ export async function GET() {
         error: 'OR_SYNC_FAILED'
       })
     }
-  } else if (w) {
-    balance = w.totalPurchased
   }
 
   return NextResponse.json({
     balance,
     usage,
     wallet: w,
-    transactions: txs
+    transactions: txs.map(t => ({
+      ...t,
+      createdAt: t.createdAt.getTime()
+    }))
   })
 }

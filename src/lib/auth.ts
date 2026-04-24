@@ -1,9 +1,17 @@
-import { NextAuthOptions } from 'next-auth'
+import { NextAuthOptions, DefaultSession } from 'next-auth'
 import EmailProvider from 'next-auth/providers/email'
 import { DrizzleAdapter } from '@auth/drizzle-adapter'
 import { db } from './db'
 import { wallets } from './db/schema'
 import { randomUUID } from 'crypto'
+
+declare module "next-auth" {
+  interface Session extends DefaultSession {
+    user: {
+      id: string
+    } & DefaultSession["user"]
+  }
+}
 
 export const authOptions: NextAuthOptions = {
   adapter: DrizzleAdapter(db),

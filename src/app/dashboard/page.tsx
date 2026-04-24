@@ -10,7 +10,7 @@ import { DashboardContent } from '@/components/DashboardContent'
 export default async function Dash() {
   const sess = await getServerSession(authOptions)
   if (!sess?.user) redirect('/api/auth/signin')
-  const uid = (sess.user as any).id
+  const uid = sess.user.id
 
   const [w] = await db.select().from(wallets).where(eq(wallets.userId, uid))
   const txs = await db.select().from(transactions)
@@ -20,23 +20,27 @@ export default async function Dash() {
 
   let balance = 0
   let usage = 0
+  
   if (w?.keyHash) {
     try {
       const ork = await get_key(w.keyHash)
-      usage = ork.usage || 0
-      balance = w.totalPurchased - usage
+      if (ork) {
+        balance = ork.limit_remaining || 0
+        usage = ork.usage || 0
+      }
     } catch (err) {
-      balance = w.totalPurchased
+      console.error('Initial fetch failed')
     }
-  } else if (w) {
-    balance = w.totalPurchased
   }
 
   const initialData = {
     balance,
     usage,
-    wallet: w,
-    transactions: txs
+    wallet: w || null,
+    transactions: txs.map(t => ({
+      ...t,
+      createdAt: t.createdAt.getTime()
+    }))
   }
 
   return <DashboardContent initialData={initialData} />

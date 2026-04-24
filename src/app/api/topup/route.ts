@@ -12,7 +12,7 @@ export async function POST(req: Request) {
   if (isNaN(amt) || amt <= 0) return new Response('Invalid amount', { status: 400 })
 
   const checkout = await create_checkout(
-    (sess.user as any).id,
+    sess.user.id,
     sess.user.email!,
     amt
   )

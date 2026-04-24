@@ -3,7 +3,7 @@ import { stripe } from '@/lib/stripe'
 import { db } from '@/lib/db'
 import { wallets, transactions } from '@/lib/db/schema'
 import { eq } from 'drizzle-orm'
-import { create_key, update_key } from '@/lib/openrouter'
+import { create_key, get_key, update_key } from '@/lib/openrouter'
 import { randomUUID } from 'crypto'
 
 const sk = process.env.STRIPE_WEBHOOK_SECRET!
@@ -14,12 +14,13 @@ export async function POST(req: Request) {
   let ev
   try {
     ev = stripe.webhooks.constructEvent(body, sig, sk)
-  } catch (err: any) {
-    return NextResponse.json({ err: err.message }, { status: 400 })
+  } catch (err) {
+    const msg = err instanceof Error ? err.message : 'Unknown error'
+    return NextResponse.json({ err: msg }, { status: 400 })
   }
 
   if (ev.type === 'checkout.session.completed') {
-    const sess = ev.data.object as any
+    const sess = ev.data.object as unknown as { id: string, metadata: { uid: string, amt: string } }
     const uid = sess.metadata.uid
     const amt = parseFloat(sess.metadata.amt)
 
@@ -27,25 +28,27 @@ export async function POST(req: Request) {
     const [existing] = await db.select().from(transactions).where(eq(transactions.stripeSessionId, sess.id))
     if (existing) return NextResponse.json({ ok: true, msg: 'Duplicate' })
 
-    // Update DB
+    // Update OpenRouter and DB
     const [w] = await db.select().from(wallets).where(eq(wallets.userId, uid))
-    const nt = (w?.totalPurchased || 0) + amt
 
     let kh = w?.keyHash
     let kl = w?.keyLabel
     let kv = w?.keyValue
 
     if (!kh) {
-      const ok = await create_key(`USER_${uid.slice(0, 8)}`, nt)
+      // First key
+      const ok = await create_key(`USER_${uid.slice(0, 8)}`, amt)
       kh = ok.hash
       kl = ok.label
-      kv = ok.key // The secret
+      kv = ok.key
     } else {
-      await update_key(kh, nt)
+      // Top up existing key: stateless increment using current balance
+      const ork = await get_key(kh)
+      const newLimit = (ork?.limit || 0) + amt
+      await update_key(kh, { limit: newLimit })
     }
 
     await db.update(wallets).set({
-      totalPurchased: nt,
       keyHash: kh,
       keyLabel: kl,
       keyValue: kv,

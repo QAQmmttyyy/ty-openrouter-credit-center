@@ -1,20 +1,49 @@
 'use client'
 
 import useSWR from 'swr'
-import { CreditCard, Key, History, LogOut, Eye, EyeOff, Copy, Check } from 'lucide-react'
+import { CreditCard, Key, History, LogOut, Eye, EyeOff, Copy, Check, RefreshCw } from 'lucide-react'
 import { useState, useEffect } from 'react'
 import { signOut } from 'next-auth/react'
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog"
 
 const fetcher = (url: string) => fetch(url).then(res => res.json())
 
-export function DashboardContent({ initialData }: { initialData: any }) {
+interface DashboardData {
+  balance: number
+  usage: number
+  wallet: {
+    keyHash: string | null
+    keyLabel: string | null
+    keyValue: string | null
+  } | null
+  transactions: {
+    id: string
+    amount: number
+    status: string
+    createdAt: number
+  }[]
+  error?: string
+}
+
+export function DashboardContent({ initialData }: { initialData: DashboardData }) {
   const [mounted, setMounted] = useState(false)
   const [showKey, setShowKey] = useState(false)
   const [copied, setCopied] = useState(false)
+  const [rotating, setRotating] = useState(false)
   
   useEffect(() => setMounted(true), [])
 
-  const { data, error } = useSWR('/api/dashboard', fetcher, {
+  const { data, error, mutate } = useSWR<DashboardData>('/api/dashboard', fetcher, {
     fallbackData: initialData,
     refreshInterval: 5000,
   })
@@ -28,6 +57,23 @@ export function DashboardContent({ initialData }: { initialData: any }) {
     setTimeout(() => setCopied(false), 2000)
   }
 
+  const rotateKey = async () => {
+    setRotating(true)
+    try {
+      const res = await fetch('/api/rotate', { method: 'POST' })
+      if (res.ok) {
+        await mutate()
+        setShowKey(true)
+      } else {
+        alert('Rotation failed')
+      }
+    } catch (err) {
+      alert('Rotation failed')
+    } finally {
+      setRotating(false)
+    }
+  }
+
   return (
     <div className="max-w-4xl mx-auto p-6 space-y-8">
       <header className="flex justify-between items-start">
@@ -39,7 +85,7 @@ export function DashboardContent({ initialData }: { initialData: any }) {
           <div className="text-right">
             <span className="text-muted-foreground text-sm font-medium block">Balance</span>
             <span className="text-4xl font-mono font-bold">
-              {(error || dataError) ? '---' : `$${Number(balance).toFixed(2)}`}
+              {(error || dataError) ? '-.-' : `$${Number(balance).toFixed(2)}`}
             </span>
           </div>
           <button 
@@ -70,9 +116,34 @@ export function DashboardContent({ initialData }: { initialData: any }) {
                 <button 
                   onClick={copyKey}
                   className="p-1 hover:bg-muted rounded transition-colors text-blue-600"
+                  title="Copy"
                 >
                   {copied ? <Check size={16} /> : <Copy size={16} />}
                 </button>
+
+                <AlertDialog>
+                  <AlertDialogTrigger
+                    disabled={rotating}
+                    className={`p-1 hover:bg-muted rounded transition-colors text-orange-500 ${rotating ? 'animate-spin' : ''}`}
+                    title="Rotate Key"
+                  >
+                    <RefreshCw size={16} />
+                  </AlertDialogTrigger>
+                  <AlertDialogContent>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                      <AlertDialogDescription>
+                        Rotating your API key will immediately invalidate the current one. Any application using it will stop working until you update it with the new key.
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel>Cancel</AlertDialogCancel>
+                      <AlertDialogAction onClick={rotateKey} className="bg-orange-500 hover:bg-orange-600">
+                        Rotate Key
+                      </AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
               </div>
             )}
           </div>
@@ -121,7 +192,7 @@ export function DashboardContent({ initialData }: { initialData: any }) {
             </tr>
           </thead>
           <tbody>
-            {txs.map((t: any) => (
+            {txs.map((t) => (
               <tr key={t.id} className="border-b last:border-0">
                 <td className="py-2" suppressHydrationWarning>
                   {mounted ? new Date(t.createdAt).toLocaleDateString() : ''}
@@ -136,4 +207,3 @@ export function DashboardContent({ initialData }: { initialData: any }) {
     </div>
   )
 }
-

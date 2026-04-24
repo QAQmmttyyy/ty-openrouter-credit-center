@@ -2,6 +2,23 @@ const mgt_key = process.env.OPENROUTER_MGT_KEY!
 
 const BASE = 'https://openrouter.ai/api/v1/keys'
 
+export interface ORKey {
+  hash: string
+  label: string
+  usage: number
+  limit: number | null
+  limit_remaining: number | null
+  is_active: boolean
+}
+
+export interface ORCreateResponse {
+  data: {
+    hash: string
+    label: string
+  }
+  key: string
+}
+
 export async function create_key(name: string, limit: number) {
   const res = await fetch(BASE, {
     method: 'POST',
@@ -16,7 +33,7 @@ export async function create_key(name: string, limit: number) {
     console.error('OR_CREATE_FAILED', err)
     throw new Error('OR_CREATE_FAILED')
   }
-  const json = await res.json()
+  const json: ORCreateResponse = await res.json()
   return {
     hash: json.data.hash,
     label: json.data.label,
@@ -24,14 +41,14 @@ export async function create_key(name: string, limit: number) {
   }
 }
 
-export async function update_key(hash: string, limit: number) {
+export async function update_key(hash: string, data: { limit?: number, disabled?: boolean }) {
   const res = await fetch(`${BASE}/${hash}`, {
     method: 'PATCH',
     headers: {
       Authorization: `Bearer ${mgt_key}`,
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify({ limit }),
+    body: JSON.stringify(data),
   })
   if (!res.ok) {
     const err = await res.text()
@@ -39,7 +56,7 @@ export async function update_key(hash: string, limit: number) {
     throw new Error('OR_UPDATE_FAILED')
   }
   const json = await res.json()
-  return json.data
+  return json.data as ORKey
 }
 
 export async function get_key(hash: string) {
@@ -49,13 +66,14 @@ export async function get_key(hash: string) {
       'Content-Type': 'application/json',
     },
   })
+  if (res.status === 404) return null
   if (!res.ok) {
     const err = await res.text()
     console.error('OR_GET_FAILED', err)
     throw new Error('OR_GET_FAILED')
   }
   const json = await res.json()
-  return json.data
+  return json.data as ORKey
 }
 
 export async function delete_key(hash: string) {
