@@ -202,13 +202,13 @@ export function DashboardContent({ initialData }: { initialData: DashboardData }
             </tr>
           </thead>
           <tbody>
-            {txs.map((t) => (
-              <tr key={t.id} className="border-b last:border-0">
+            {txs.map((item) => (
+              <tr key={item.id} className="border-b last:border-0">
                 <td className="py-2" suppressHydrationWarning>
-                  {mounted ? new Date(t.createdAt).toLocaleDateString(locale) : ''}
+                  {mounted ? new Date(item.createdAt).toLocaleDateString(locale) : ''}
                 </td>
-                <td className="py-2 font-mono">${Number(t.amount).toFixed(2)}</td>
-                <td className="py-2 capitalize">{t.status}</td>
+                <td className="py-2 font-mono">${Number(item.amount).toFixed(2)}</td>
+                <td className="py-2 capitalize">{item.status === 'completed' ? t('completed') : item.status === 'pending' ? t('pending') : t('failed')}</td>
               </tr>
             ))}
           </tbody>

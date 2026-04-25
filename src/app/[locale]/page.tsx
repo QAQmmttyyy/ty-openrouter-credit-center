@@ -5,11 +5,12 @@ import Link from 'next/link'
 import { getTranslations } from 'next-intl/server'
 import { LocaleSwitcher } from '@/components/LocaleSwitcher'
 
-export default async function Home({ params: { locale } }: { params: { locale: string } }) {
+export default async function Home(props: { params: Promise<{ locale: string }> }) {
+  const { locale } = await props.params;
   const sess = await getServerSession(authOptions)
   if (sess) redirect(`/${locale}/dashboard`)
 
-  const t = await getTranslations('Home')
+  const t = await getTranslations({ locale, namespace: 'Home' })
 
   return (
     <div className="relative flex flex-col items-center justify-center min-h-screen text-center px-4">

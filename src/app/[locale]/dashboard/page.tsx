@@ -7,7 +7,8 @@ import { redirect } from 'next/navigation'
 import { get_key } from '@/lib/openrouter'
 import { DashboardContent } from '@/components/DashboardContent'
 
-export default async function Dash({ params: { locale } }: { params: { locale: string } }) {
+export default async function Dash(props: { params: Promise<{ locale: string }> }) {
+  const { locale } = await props.params;
   const sess = await getServerSession(authOptions)
   if (!sess?.user) redirect(`/${locale}/auth/signin`)
   const uid = sess.user.id

@@ -14,7 +14,10 @@
     "status": "状态",
     "copy": "复制",
     "signOut": "退出登录",
-    "noKey": "充值后即可生成您的 API 密钥。"
+    "noKey": "充值后即可生成您的 API 密钥。",
+    "completed": "已完成",
+    "pending": "进行中",
+    "failed": "已失败"
   },
   "Stripe": {
     "credits": "信用额度",
@@ -28,9 +31,9 @@
     "confirm": "确定"
   },
   "Home": {
-    "titlePrefix": "本地 AI ",
+    "titlePrefix": "SonicAI ",
     "titleSuffix": "额度中心",
-    "description": "为您的本地 AI 客户端管理 OpenRouter 额度的最简便方式。充值、获取密钥，开启对话。",
+    "description": "为您的本地 AI 客户端管理 AI 额度的最简便方式。充值、获取密钥，开启对话。",
     "getStarted": "立即开始"
   },
   "Auth": {
@@ -43,5 +46,31 @@
     "successDesc": "登录链接已发送至您的电子邮箱。",
     "error": "登录失败",
     "backToHome": "返回首页"
+  },
+  "Terms": {
+    "title": "服务条款 (Terms of Service)",
+    "section1Title": "服务内容",
+    "section1Content": "SonicAI 提供 API 额度管理与充值服务。用户通过 Stripe 支付后，额度将自动充值到对应的 API 密钥中。",
+    "section2Title": "充值与退款政策",
+    "section2Content": "注意：由于虚拟产品的特殊性，充值一旦成功，不支持任何形式的退款。请在充值前确认金额。",
+    "section3Title": "账号安全",
+    "section3Content": "用户需妥善保管自己的 API 密钥。因密钥泄露导致的额度损失由用户自行承担。",
+    "section4Title": "服务变更",
+    "section4Content": "我们保留根据上游供应商调整价格或服务策略的权利。",
+    "lastUpdated": "最后更新：2026年4月25日",
+    "back": "返回首页"
+  },
+  "Privacy": {
+    "title": "隐私政策 (Privacy Policy)",
+    "section1Title": "数据收集",
+    "section1Content": "我们仅收集处理订单所必需的信息，包括：GitHub 账号（用于登录）、支付流水号（由 Stripe 提供）以及充值记录。",
+    "section2Title": "支付信息安全",
+    "section2Content": "所有的支付操作均在 Stripe 安全页面 complete。我们不会接触、存储或处理您的信用卡号或支付密码。",
+    "section3Title": "Cookie 使用",
+    "section3Content": "我们使用必要的 Cookie 来维持您的登录状态。",
+    "section4Title": "数据共享",
+    "section4Content": "除了为完成充值必须与上游供应商和 Stripe 进行的数据交互外，我们不会向任何第三方出售或分享您的个人信息。",
+    "lastUpdated": "最后更新：2026年4月25日",
+    "back": "返回首页"
   }
 }

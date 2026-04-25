@@ -14,7 +14,10 @@
     "status": "Status",
     "copy": "Copy",
     "signOut": "Sign Out",
-    "noKey": "Top up to generate your API key."
+    "noKey": "Top up to generate your API key.",
+    "completed": "Completed",
+    "pending": "Pending",
+    "failed": "Failed"
   },
   "Stripe": {
     "credits": "Credits",
@@ -28,9 +31,9 @@
     "confirm": "Confirm"
   },
   "Home": {
-    "titlePrefix": "Local AI ",
+    "titlePrefix": "SonicAI ",
     "titleSuffix": "Credit Center",
-    "description": "The simplest way to manage your OpenRouter credits for your local AI client. Top up, get a key, and start chatting.",
+    "description": "The simplest way to manage your AI credits for your local AI client. Top up, get a key, and start chatting.",
     "getStarted": "Get Started"
   },
   "Auth": {
@@ -43,5 +46,31 @@
     "successDesc": "A login link has been sent to your email address.",
     "error": "Sign in failed",
     "backToHome": "Back to Home"
+  },
+  "Terms": {
+    "title": "Terms of Service",
+    "section1Title": "Services",
+    "section1Content": "SonicAI provides API credit management and top-up services. Credits are automatically added after successful Stripe payment.",
+    "section2Title": "Refund Policy",
+    "section2Content": "Note: Due to the nature of digital goods, all top-ups are final and non-refundable.",
+    "section3Title": "Security",
+    "section3Content": "Users are responsible for their own API keys. We are not liable for losses due to key leakage.",
+    "section4Title": "Changes",
+    "section4Content": "We reserve the right to adjust pricing or service terms based on upstream providers.",
+    "lastUpdated": "Last updated: April 25, 2026",
+    "back": "Back to Home"
+  },
+  "Privacy": {
+    "title": "Privacy Policy",
+    "section1Title": "Data Collection",
+    "section1Content": "We only collect necessary information: GitHub account, Stripe payment reference, and transaction history.",
+    "section2Title": "Payment Security",
+    "section2Content": "All payments are handled securely by Stripe. We do not store or process your credit card details.",
+    "section3Title": "Cookies",
+    "section3Content": "We use essential cookies to maintain your login session.",
+    "section4Title": "Data Sharing",
+    "section4Content": "We do not sell your personal data. Data is only shared with upstream providers and Stripe to complete transactions.",
+    "lastUpdated": "Last updated: April 25, 2026",
+    "back": "Back to Home"
   }
 }
