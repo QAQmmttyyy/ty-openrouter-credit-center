@@ -1,15 +1,15 @@
-import { sqliteTable, text, integer, real, primaryKey } from 'drizzle-orm/sqlite-core'
+import { pgTable, text, integer, doublePrecision, timestamp, primaryKey } from 'drizzle-orm/pg-core'
 import type { AdapterAccount } from 'next-auth/adapters'
 
-export const users = sqliteTable('user', {
+export const users = pgTable('user', {
   id: text('id').notNull().primaryKey(),
   name: text('name'),
   email: text('email').notNull(),
-  emailVerified: integer('emailVerified', { mode: 'timestamp_ms' }),
+  emailVerified: timestamp('emailVerified', { mode: 'date' }),
   image: text('image'),
 })
 
-export const accounts = sqliteTable('account', {
+export const accounts = pgTable('account', {
   userId: text('userId').notNull().references(() => users.id, { onDelete: 'cascade' }),
   type: text('type').$type<AdapterAccount['type']>().notNull(),
   provider: text('provider').notNull(),
@@ -25,35 +25,35 @@ export const accounts = sqliteTable('account', {
   compoundKey: primaryKey({ columns: [account.provider, account.providerAccountId] }),
 }))
 
-export const sessions = sqliteTable('session', {
+export const sessions = pgTable('session', {
   sessionToken: text('sessionToken').notNull().primaryKey(),
   userId: text('userId').notNull().references(() => users.id, { onDelete: 'cascade' }),
-  expires: integer('expires', { mode: 'timestamp_ms' }).notNull(),
+  expires: timestamp('expires', { mode: 'date' }).notNull(),
 })
 
-export const verificationTokens = sqliteTable('verificationToken', {
+export const verificationTokens = pgTable('verificationToken', {
   identifier: text('identifier').notNull(),
   token: text('token').notNull(),
-  expires: integer('expires', { mode: 'timestamp_ms' }).notNull(),
+  expires: timestamp('expires', { mode: 'date' }).notNull(),
 }, (vt) => ({
   compoundKey: primaryKey({ columns: [vt.identifier, vt.token] }),
 }))
 
-export const wallets = sqliteTable('wallet', {
+export const wallets = pgTable('wallet', {
   id: text('id').notNull().primaryKey(),
   userId: text('user_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
   keyHash: text('key_hash'),
   keyLabel: text('key_label'),
   keyValue: text('key_value'), // Only shown once during creation
-  updatedAt: integer('updated_at', { mode: 'timestamp_ms' }),
+  updatedAt: timestamp('updated_at', { mode: 'date' }),
 })
 
-export const transactions = sqliteTable('transaction', {
+export const transactions = pgTable('transaction', {
   id: text('id').notNull().primaryKey(),
   userId: text('user_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
-  amount: real('amount').notNull(),
+  amount: doublePrecision('amount').notNull(),
   type: text('type').notNull(), // 'topup', 'usage_sync'
   status: text('status').notNull(), // 'pending', 'completed', 'failed'
   stripeSessionId: text('stripe_session_id').unique(),
-  createdAt: integer('created_at', { mode: 'timestamp_ms' }).notNull(),
+  createdAt: timestamp('created_at', { mode: 'date' }).notNull(),
 })

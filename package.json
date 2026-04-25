@@ -12,7 +12,6 @@
   "dependencies": {
     "@auth/drizzle-adapter": "^1.7.4",
     "@base-ui/react": "^1.4.1",
-    "@libsql/client": "^0.14.0",
     "@openrouter/sdk": "^0.0.1",
     "@radix-ui/react-slot": "^1.1.0",
     "class-variance-authority": "^0.7.1",
@@ -23,6 +22,7 @@
     "next-auth": "^4.24.10",
     "next-intl": "^4.9.1",
     "nodemailer": "^7.0.13",
+    "postgres": "^3.4.9",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "shadcn": "^4.4.0",
