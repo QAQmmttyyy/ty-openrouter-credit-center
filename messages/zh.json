@@ -1,0 +1,47 @@
+{
+  "Dashboard": {
+    "title": "控制面板",
+    "description": "管理您的 API 额度与密钥",
+    "balance": "余额",
+    "apiKey": "API 密钥",
+    "rotateKey": "轮换密钥",
+    "rotateConfirmTitle": "您确定要轮换吗？",
+    "rotateConfirmDesc": "轮换 API 密钥将立即使当前密钥失效。在使用该密钥的任何应用程序更新新密钥之前，它们将停止工作。",
+    "topUp": "充值",
+    "recentTransactions": "最近交易",
+    "date": "日期",
+    "amount": "金额",
+    "status": "状态",
+    "copy": "复制",
+    "signOut": "退出登录",
+    "noKey": "充值后即可生成您的 API 密钥。"
+  },
+  "Stripe": {
+    "credits": "信用额度",
+    "fees": "服务与平台费",
+    "checkoutDescription": "充值 {amt} USD 额度"
+  },
+  "Common": {
+    "cancel": "取消",
+    "success": "成功",
+    "failed": "失败",
+    "confirm": "确定"
+  },
+  "Home": {
+    "titlePrefix": "本地 AI ",
+    "titleSuffix": "额度中心",
+    "description": "为您的本地 AI 客户端管理 OpenRouter 额度的最简便方式。充值、获取密钥，开启对话。",
+    "getStarted": "立即开始"
+  },
+  "Auth": {
+    "signIn": "登录",
+    "emailLabel": "电子邮箱",
+    "emailPlaceholder": "name@example.com",
+    "sendLink": "发送登录链接",
+    "desc": "输入您的邮箱以接收安全的登录链接。",
+    "success": "请查收邮件",
+    "successDesc": "登录链接已发送至您的电子邮箱。",
+    "error": "登录失败",
+    "backToHome": "返回首页"
+  }
+}

@@ -4,6 +4,8 @@ import useSWR from 'swr'
 import { CreditCard, Key, History, LogOut, Eye, EyeOff, Copy, Check, RefreshCw } from 'lucide-react'
 import { useState, useEffect } from 'react'
 import { signOut } from 'next-auth/react'
+import { useTranslations, useLocale } from 'next-intl'
+import { LocaleSwitcher } from './LocaleSwitcher'
 import {
   AlertDialog,
   AlertDialogAction,
@@ -36,6 +38,10 @@ interface DashboardData {
 }
 
 export function DashboardContent({ initialData }: { initialData: DashboardData }) {
+  const t = useTranslations('Dashboard')
+  const tc = useTranslations('Common')
+  const locale = useLocale()
+
   const [mounted, setMounted] = useState(false)
   const [showKey, setShowKey] = useState(false)
   const [copied, setCopied] = useState(false)
@@ -78,23 +84,26 @@ export function DashboardContent({ initialData }: { initialData: DashboardData }
     <div className="max-w-4xl mx-auto p-6 space-y-8">
       <header className="flex justify-between items-start">
         <div>
-          <h1 className="text-2xl font-bold">Dashboard</h1>
-          <p className="text-muted-foreground text-sm">Manage your API credits and keys</p>
+          <h1 className="text-2xl font-bold">{t('title')}</h1>
+          <p className="text-muted-foreground text-sm">{t('description')}</p>
         </div>
         <div className="flex items-center gap-6">
           <div className="text-right">
-            <span className="text-muted-foreground text-sm font-medium block">Balance</span>
+            <span className="text-muted-foreground text-sm font-medium block">{t('balance')}</span>
             <span className="text-4xl font-mono font-bold">
               {(error || dataError) ? '-.-' : `$${Number(balance).toFixed(2)}`}
             </span>
           </div>
-          <button 
-            onClick={() => signOut({ callbackUrl: '/' })}
-            className="p-2 text-muted-foreground hover:text-red-500 transition-colors"
-            title="Sign Out"
-          >
-            <LogOut size={20} />
-          </button>
+          <div className="flex gap-2">
+            <LocaleSwitcher />
+            <button 
+              onClick={() => signOut({ callbackUrl: '/' })}
+              className="p-2 text-muted-foreground hover:text-red-500 transition-colors"
+              title={t('signOut')}
+            >
+              <LogOut size={20} />
+            </button>
+          </div>
         </div>
       </header>
 
@@ -103,7 +112,7 @@ export function DashboardContent({ initialData }: { initialData: DashboardData }
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-2">
               <Key size={18} className="text-blue-500" />
-              <h2 className="font-semibold">API Key</h2>
+              <h2 className="font-semibold">{t('apiKey')}</h2>
             </div>
             {wallet?.keyHash && (
               <div className="flex gap-1">
@@ -116,7 +125,7 @@ export function DashboardContent({ initialData }: { initialData: DashboardData }
                 <button 
                   onClick={copyKey}
                   className="p-1 hover:bg-muted rounded transition-colors text-blue-600"
-                  title="Copy"
+                  title={t('copy')}
                 >
                   {copied ? <Check size={16} /> : <Copy size={16} />}
                 </button>
@@ -125,21 +134,21 @@ export function DashboardContent({ initialData }: { initialData: DashboardData }
                   <AlertDialogTrigger
                     disabled={rotating}
                     className={`p-1 hover:bg-muted rounded transition-colors text-orange-500 ${rotating ? 'animate-spin' : ''}`}
-                    title="Rotate Key"
+                    title={t('rotateKey')}
                   >
                     <RefreshCw size={16} />
                   </AlertDialogTrigger>
                   <AlertDialogContent>
                     <AlertDialogHeader>
-                      <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                      <AlertDialogTitle>{t('rotateConfirmTitle')}</AlertDialogTitle>
                       <AlertDialogDescription>
-                        Rotating your API key will immediately invalidate the current one. Any application using it will stop working until you update it with the new key.
+                        {t('rotateConfirmDesc')}
                       </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter>
-                      <AlertDialogCancel>Cancel</AlertDialogCancel>
+                      <AlertDialogCancel>{tc('cancel')}</AlertDialogCancel>
                       <AlertDialogAction onClick={rotateKey} className="bg-orange-500 hover:bg-orange-600">
-                        Rotate Key
+                        {t('rotateKey')}
                       </AlertDialogAction>
                     </AlertDialogFooter>
                   </AlertDialogContent>
@@ -155,7 +164,7 @@ export function DashboardContent({ initialData }: { initialData: DashboardData }
             </div>
           ) : (
             <p className="text-sm text-muted-foreground italic">
-              Top up to generate your API key.
+              {t('noKey')}
             </p>
           )}
         </section>
@@ -163,12 +172,13 @@ export function DashboardContent({ initialData }: { initialData: DashboardData }
         <section className="bg-white border rounded-xl p-6 shadow-sm">
           <div className="flex items-center gap-2 mb-4">
             <CreditCard size={18} className="text-green-500" />
-            <h2 className="font-semibold">Top Up</h2>
+            <h2 className="font-semibold">{t('topUp')}</h2>
           </div>
           <div className="flex gap-2">
             {[10, 20, 50].map(amt => (
               <form key={amt} action="/api/topup" method="POST">
                 <input type="hidden" name="amt" value={amt} />
+                <input type="hidden" name="locale" value={locale} />
                 <button className="px-4 py-2 border rounded hover:bg-muted font-medium transition-colors">
                   ${amt}
                 </button>
@@ -181,21 +191,21 @@ export function DashboardContent({ initialData }: { initialData: DashboardData }
       <section className="bg-white border rounded-xl p-6 shadow-sm">
         <div className="flex items-center gap-2 mb-4">
           <History size={18} className="text-purple-500" />
-          <h2 className="font-semibold">Recent Transactions</h2>
+          <h2 className="font-semibold">{t('recentTransactions')}</h2>
         </div>
         <table className="w-full text-sm">
           <thead className="text-muted-foreground border-b">
             <tr>
-              <th className="text-left pb-2">Date</th>
-              <th className="text-left pb-2">Amount</th>
-              <th className="text-left pb-2">Status</th>
+              <th className="text-left pb-2">{t('date')}</th>
+              <th className="text-left pb-2">{t('amount')}</th>
+              <th className="text-left pb-2">{t('status')}</th>
             </tr>
           </thead>
           <tbody>
             {txs.map((t) => (
               <tr key={t.id} className="border-b last:border-0">
                 <td className="py-2" suppressHydrationWarning>
-                  {mounted ? new Date(t.createdAt).toLocaleDateString() : ''}
+                  {mounted ? new Date(t.createdAt).toLocaleDateString(locale) : ''}
                 </td>
                 <td className="py-2 font-mono">${Number(t.amount).toFixed(2)}</td>
                 <td className="py-2 capitalize">{t.status}</td>

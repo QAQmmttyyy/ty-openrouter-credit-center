@@ -1,0 +1,47 @@
+{
+  "Dashboard": {
+    "title": "Dashboard",
+    "description": "Manage your API credits and keys",
+    "balance": "Balance",
+    "apiKey": "API Key",
+    "rotateKey": "Rotate Key",
+    "rotateConfirmTitle": "Are you absolutely sure?",
+    "rotateConfirmDesc": "Rotating your API key will immediately invalidate the current one. Any application using it will stop working until you update it with the new key.",
+    "topUp": "Top Up",
+    "recentTransactions": "Recent Transactions",
+    "date": "Date",
+    "amount": "Amount",
+    "status": "Status",
+    "copy": "Copy",
+    "signOut": "Sign Out",
+    "noKey": "Top up to generate your API key."
+  },
+  "Stripe": {
+    "credits": "Credits",
+    "fees": "Service & Platform Fees",
+    "checkoutDescription": "Top up {amt} USD credits"
+  },
+  "Common": {
+    "cancel": "Cancel",
+    "success": "Success",
+    "failed": "Failed",
+    "confirm": "Confirm"
+  },
+  "Home": {
+    "titlePrefix": "Local AI ",
+    "titleSuffix": "Credit Center",
+    "description": "The simplest way to manage your OpenRouter credits for your local AI client. Top up, get a key, and start chatting.",
+    "getStarted": "Get Started"
+  },
+  "Auth": {
+    "signIn": "Sign In",
+    "emailLabel": "Email Address",
+    "emailPlaceholder": "name@example.com",
+    "sendLink": "Send Magic Link",
+    "desc": "Enter your email to receive a secure login link.",
+    "success": "Check your email",
+    "successDesc": "A login link has been sent to your email address.",
+    "error": "Sign in failed",
+    "backToHome": "Back to Home"
+  }
+}

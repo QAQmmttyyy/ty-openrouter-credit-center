@@ -9,12 +9,14 @@ export async function POST(req: Request) {
 
   const data = await req.formData()
   const amt = parseFloat(data.get('amt') as string)
+  const locale = (data.get('locale') as string) || 'zh'
   if (isNaN(amt) || amt <= 0) return new Response('Invalid amount', { status: 400 })
 
   const checkout = await create_checkout(
     sess.user.id,
     sess.user.email!,
-    amt
+    amt,
+    locale as 'en' | 'zh'
   )
 
   return NextResponse.redirect(checkout.url!, { status: 303 })
