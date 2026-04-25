@@ -39,3 +39,6 @@ local.db-journal
 
 # bun
 bun.lockb
+
+# context
+.terminals

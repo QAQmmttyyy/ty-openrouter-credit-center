@@ -7,6 +7,14 @@
 - NEVER chain agent-browser commands with `&&` in a single shell call.
 - **Prohibit Interactive Shell**: All commands must be run non-interactively; if interaction is necessary, ask the user instead of blocking the process.
 - use Bun.
+- **Log-Driven Backgrounding**: Whenever executing long-running or background processes (e.g., `next dev`):
+    1. **Log Redirection**: Always append output using `>> .terminals/<name>.log 2>&1 &`. Prepend a session separator with a timestamp (e.g., `echo "\n--- [$(date)] Starting <name> ---" >> .terminals/<name>.log`) to ensure historical runs are distinguishable and not overwritten.
+    2. **Log as Truth**: Treat `.terminals/*.log` as the primary source for runtime information (ports, errors). Before starting a new service, inspect these logs to identify and clean up orphan processes from previous sessions.
+- **Strict Process Management**: It is strictly prohibited to use fuzzy matching commands like `pkill -f` to terminate processes. To safely stop a service:
+    1. **Trace Port**: Identify the port from `.terminals/` logs, `.env` files, or previous conversation context.
+    2. **Get PID**: Use `lsof -i :<port>` to find the specific PID associated with the project's port.
+    3. **Targeted Kill**: Execute `kill <PID>` only after confirming it belongs to the current project.
+    If the port cannot be determined, stop and ask the user for clarification.
 
 ## Style Guide
 
