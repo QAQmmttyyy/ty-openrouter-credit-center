@@ -4,7 +4,6 @@
 - Prefer automation: execute requested actions without confirmation unless blocked by missing info or safety/irreversibility.
 - When initializing the project, it is necessary to ensure that the .gitignore file exists first.
 - When the version or functionality of the tool relied upon by Skill does not fully match the description in the Skill documentation, you should stop, explain to the user, and seek confirmation.
-- NEVER chain agent-browser commands with `&&` in a single shell call.
 - **Prohibit Interactive Shell**: All commands must be run non-interactively; if interaction is necessary, ask the user instead of blocking the process.
 - use Bun.
 - **Log-Driven Backgrounding**: Whenever executing long-running or background processes (e.g., `next dev`):
@@ -15,6 +14,18 @@
     2. **Get PID**: Use `lsof -i :<port>` to find the specific PID associated with the project's port.
     3. **Targeted Kill**: Execute `kill <PID>` only after confirming it belongs to the current project.
     If the port cannot be determined, stop and ask the user for clarification.
+
+- **browser use**: You can access the browser with the user's profile. Operate independently without asking the user to do things themselves.
+    1. **Operate independently**: Use `agent-browser` commands directly for browsing, clicking, filling forms, screenshots, etc. — no need to ask the user.
+    2. **Multi-tab workflow**: Use `agent-browser tab new <url>` to open different websites in new tabs instead of asking the user to open them manually.
+    3. **Login & credentials**: agent-browser loads the user's Chrome profile, so on login pages attempt to sign in directly — the browser autofills saved credentials. **Never** say "cannot access account credentials" — prefer saved sessions and ask the user only as a last resort.
+    4. **Element operation sequence** (must follow this order):
+        - `scrollintoview @eN` — ensure the target element is visible
+        - `focus @eN` — focus the element
+        - Perform the action (click/fill/type/press, etc.)
+    5. **Form monitoring**: On form submission, use `agent-browser network requests` to monitor network traffic and check the console for errors. Report any errors found.
+    6. **Ref retry rule**: After page changes, immediately re-snapshot with `snapshot -i` to get fresh refs. **Do not retry the same ref more than 3 times**. After 3 failures, try `find` semantic locators or CSS selectors before stopping and reporting to the user.
+    7. **Three-strike rule**: Any operation (login, form submission, click, etc.) **fails no more than 3 times**. After 3 failures, stop and report the situation to the user for intervention.
 
 ## Style Guide
 
